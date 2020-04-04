@@ -1,0 +1,99 @@
+<%- include("../partials/header") %>
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<p class="lead">YelCamp</p>
+			<div class="list-group">
+				<li class="list-group-item active"><span class="glyphicon glyphicon-phone-alt"></span> Contact</li>
+				<li class="list-group-item">Seller Name: <%= moreview.author.username %></li>
+				<li class="list-group-item">Phone Number: <%=moreview.phone %> </li>
+			</div>
+			<div id="map"></div>
+            <div class="thumbnail text-center"><p><span class="glyphicon glyphicon-map-marker"></span> <%=moreview.location %></p></div>
+            
+		</div>
+		<div class="col-md-9">
+			<div class="thumbnail">
+				<img class="img-responsive" src="<%=moreview.image %>">
+				<div class="caption-full">
+					<h4 class="pull-right">$<%=moreview.price %>/night</h4>
+					<h4> <a><%=moreview.name %></a> </h4>
+					<p><%=moreview.description %></p>
+					<p>
+                        <em>Posted by: <%= moreview.author.username %>, <%= moment(moreview.createdAt).fromNow() %></em>
+                    </p>
+<%if(currentUser && moreview.author.id.equals(currentUser._id)|| currentUser && currentUser.isAdmin){ %>
+    <a class="btn btn-xs btn-warning" href="/campground/<%=moreview._id%>/edit">Edit</a>
+    <form id ="delete-form" action="/campground/<%=moreview._id %>?_method=DELETE" method="POST">
+	    <button class="btn btn-xs btn-danger" >delete</button>
+    </form>
+<%}%>
+				</div>
+			</div>
+			<div class="well">
+				<div class="text-right">
+					<a class="btn btn-success" href="/campground/<%=moreview._id%>/comments/new">Add New Comment</a>
+				</div>
+				<hr>
+                <% moreview.comments.forEach(function(comment){ %>
+                <div class="row">
+                	<div class="col-md-12">
+                		<strong><%=comment.author.username %></strong>
+                		<span class="pull-right"><%= moment(comment.createdAt).fromNow() %></span>
+                		<p><%=comment.text%> </p>
+<%if(currentUser && comment.author.id.equals(currentUser._id)|| currentUser && currentUser.isAdmin){ %>                		
+                		<a class="btn btn-xs btn-warning" href="/campground/<%=moreview._id%>/comments/<%=comment._id%>/edit">Edit</a>
+                		<form id="delete-form" action="/campground/<%=moreview._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                			<input type="submit" 
+                		class="btn btn-xs btn-danger" value="Delete">
+                		</form>
+<%}%>                		
+                	</div>
+                </div>
+                     
+                <% })%>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+  function initMap() {
+    const lat = <%= moreview.lat %>;
+    const lng = <%= moreview.lng %>;
+    const center = {lat: lat, lng: lng };
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: center,
+        scrollwheel: false
+    });
+    const contentString = `
+      <strong><%= moreview.name %><br />
+      <%= moreview.location %></strong>
+      <p><%= moreview.description %></p>
+    `
+    const infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    const marker = new google.maps.Marker({
+        position: center,
+        map: map
+    });
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpJ5E238AhL4m2sl9ZNQPwF9W0tD1VaEU&callback=initMap"></script>
+
+
+
+
+
+
+
+
+
+<div class="text-center"><%- include("../partials/footer") %></div>

@@ -1,0 +1,20 @@
+<%- include("../partials/header") %>
+
+
+<h1 class="text-center">
+	Edit 
+</h1>
+<!-- ADD New Camp picture form -->
+<div style="width: 25% ; margin: 0 auto ;">
+	
+	<form class="text-center" action="/campground/<%=campground_id%>/comments/<%=comment._id%>?_method=PUT" method="POST">
+  <div class="form-group">
+    <input type="text" class="form-control" name="comment[text]" value="<%=comment.text%>">
+  </div>
+
+
+<input class="btn-primary btn-lg btn-block" type="submit"  value="Submit">
+</form>
+<a href='/campground'>Go back</a>	
+</div>
+ 
